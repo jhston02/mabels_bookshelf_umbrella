@@ -1,5 +1,6 @@
 defmodule MabelsBookshelf.Behaviors.EventSourced do
   alias MabelsBookshelf.Behaviors.Event
+
   @doc """
   Add event to aggregate
   """

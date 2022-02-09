@@ -1,3 +1,10 @@
 defmodule MabelsBookshelf.Behaviors.Event do
-  defstruct [:type, :id, :time, data: %{}]
+  defstruct [type: nil, body: %{}, metadata: %{}]
+
+  def new(type, body) do
+    %__MODULE__{
+      type: type,
+      body: body
+    }
+  end
 end

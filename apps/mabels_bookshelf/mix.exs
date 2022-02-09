@@ -36,9 +36,11 @@ defmodule MabelsBookshelf.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:spear, "~> 0.11.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:swoosh, "~> 1.3"},
-      {:ecto, "~> 3.7"}
+      {:ecto, "~> 3.7"},
+      {:jason, "~> 1.3"}
     ]
   end
 
