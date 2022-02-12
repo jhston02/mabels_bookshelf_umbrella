@@ -114,13 +114,6 @@ defmodule MabelsBookshelf.Aggregates.Book do
     {:ok, when_event(book, event)}
   end
 
-  defp finish_if_read_to_end(%__MODULE__{current_page: current_page, volume_info: %{total_pages: total_pages}} = book) when current_page == total_pages do
-    {:ok, book} = finished_reading(book)
-    book
-  end
-
-  defp finish_if_read_to_end(book), do: book
-
   @doc """
   The apply functions applies an event to a book.
   """
@@ -168,6 +161,13 @@ defmodule MabelsBookshelf.Aggregates.Book do
     |> update_field(:owner_id, data["owner_id"])
     |> update_field(:volume_info, volume_info)
   end
+
+  defp finish_if_read_to_end(%__MODULE__{current_page: current_page, volume_info: %{total_pages: total_pages}} = book) when current_page == total_pages do
+    {:ok, book} = finished_reading(book)
+    book
+  end
+
+  defp finish_if_read_to_end(book), do: book
 
   defp bump_version(book) do
     Map.update(book, :version, -1, &(&1+1))
