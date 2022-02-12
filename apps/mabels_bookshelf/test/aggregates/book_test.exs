@@ -51,36 +51,36 @@ defmodule BookTests do
 
     test "Given existing book, when finished book, book status is finished", context do
       book = context.book
-      {:ok, book} = Book.finished_reading(book)
+      {:ok, book} = Book.finish_reading(book)
 
       assert book.status == :finished
     end
 
     test "Given existing book, when finished book and already finished, returns error", context do
       book = context.book
-      {:ok, book} = Book.finished_reading(book)
+      {:ok, book} = Book.finish_reading(book)
 
-      assert {:error, _message} = Book.finished_reading(book)
+      assert {:error, _message} = Book.finish_reading(book)
     end
 
     test "Given existing book, when finished book and book in dnf status, returns error", context do
       book = context.book
-      {:ok, book} = Book.quit(book)
+      {:ok, book} = Book.quit_reading(book)
 
-      assert {:error, _message} = Book.finished_reading(book)
+      assert {:error, _message} = Book.finish_reading(book)
     end
 
     test "Given existing book, when quit book, book status is did not finish", context do
       book = context.book
-      {:ok, book} = Book.quit(book)
+      {:ok, book} = Book.quit_reading(book)
 
       assert book.status == :dnf
     end
 
     test "Given existing book, when want book, book status is wanted", context do
       book = context.book
-      {:ok, book} = Book.finished_reading(book)
-      {:ok, book} = Book.wanted(book)
+      {:ok, book} = Book.finish_reading(book)
+      {:ok, book} = Book.want_to_read(book)
 
       assert book.status == :want
     end

@@ -52,10 +52,10 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to finished
   """
-  def finished_reading(%__MODULE__{:status => :finished}), do: {:error, "Already finished book"}
-  def finished_reading(%__MODULE__{:status => :dnf}), do:   {:error, "Book not finished"}
+  def finish_reading(%__MODULE__{:status => :finished}), do: {:error, "Already finished book"}
+  def finish_reading(%__MODULE__{:status => :dnf}), do:   {:error, "Book not finished"}
 
-  def finished_reading(%__MODULE__{} = book) do
+  def finish_reading(%__MODULE__{} = book) do
     event = Event.new(@finished_event, populate_base_event_data(book, %{}))
     {:ok, when_event(book, event)}
   end
@@ -63,9 +63,9 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to 'Did Not finish' (dnf)
   """
-  def quit(%__MODULE__{status: :dnf}), do: {:error, "Book already not finished"}
+  def quit_reading(%__MODULE__{status: :dnf}), do: {:error, "Book already not finished"}
 
-  def quit(%__MODULE__{} = book) do
+  def quit_reading(%__MODULE__{} = book) do
     event = Event.new(@quit_event, populate_base_event_data(book, %{}))
     {:ok, when_event(book, event)}
   end
@@ -73,9 +73,9 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to wanted.
   """
-  def wanted(%__MODULE__{status: :want}), do: {:error, "Book already wanted"}
+  def want_to_read(%__MODULE__{status: :want}), do: {:error, "Book already wanted"}
 
-  def wanted(%__MODULE__{} = book) do
+  def want_to_read(%__MODULE__{} = book) do
     event = Event.new(@wanted_event, populate_base_event_data(book, %{}))
     {:ok, when_event(book, event)}
   end
@@ -163,7 +163,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   end
 
   defp finish_if_read_to_end(%__MODULE__{current_page: current_page, volume_info: %{total_pages: total_pages}} = book) when current_page == total_pages do
-    {:ok, book} = finished_reading(book)
+    {:ok, book} = finish_reading(book)
     book
   end
 
