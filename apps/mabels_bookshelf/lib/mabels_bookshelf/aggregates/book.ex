@@ -105,8 +105,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   def read_to_page(%__MODULE__{status: :reading} = book, page_number) do
     event = Event.new(@read_event, populate_base_event_data(book, %{"page_number" => page_number}))
     book = when_event(book, event)
-
-    book = finish_if_read_to_end(book)
+    |> finish_if_read_to_end
 
     {:ok, book}
   end
