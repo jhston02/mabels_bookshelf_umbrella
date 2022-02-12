@@ -15,4 +15,9 @@ defmodule MabelsBookshelf.Behaviors.EventSourced do
   Clear pending events from aggregate
   """
   @callback clear_pending_events(term) :: term
+
+  @doc """
+  Get version
+  """
+  @callback get_version(term) :: number()
 end

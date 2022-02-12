@@ -9,7 +9,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   alias MabelsBookshelf.Aggregates.Book.VolumeInfo
   alias MabelsBookshelf.Behaviors.Event
 
-  defstruct [id: nil, volume_info: %VolumeInfo{}, status: :want, current_page: 0, owner_id: nil, events: [], deleted: false]
+  defstruct [id: nil, volume_info: %VolumeInfo{}, status: :want, current_page: 0, owner_id: nil, events: [], deleted: false, version: -1]
 
   @started_event "BookStarted"
   @finished_event "BookFinished"
@@ -139,31 +139,36 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   The apply functions applies an event to a book.
   """
-  def apply_event(%__MODULE__{} = book, %Event{:type => @started_event}) do
+  def apply_event(%__MODULE__{} = book, %Event{} = event) do
+    apply_event_impl(book, event)
+    |> bump_version()
+  end
+
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @started_event}) do
     update_field(book, :status, :reading)
   end
 
-  def apply_event(%__MODULE__{} = book, %Event{:type => @finished_event}) do
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @finished_event}) do
     update_field(book, :status, :finished)
   end
 
-  def apply_event(%__MODULE__{} = book, %Event{:type => @quit_event}) do
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @quit_event}) do
     update_field(book, :status, :dnf)
   end
 
-  def apply_event(%__MODULE__{} = book, %Event{:type => @wanted_event}) do
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @wanted_event}) do
     update_field(book, :status, :want)
   end
 
-  def apply_event(%__MODULE__{} = book, %Event{:type => @deleted_event}) do
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @deleted_event}) do
     update_field(book, :deleted, true)
   end
 
-  def apply_event(%__MODULE__{} = book, %Event{:type => @read_event, :body => %{"page_number" => page_number}}) do
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @read_event, :body => %{"page_number" => page_number}}) do
     update_field(book, :current_page, page_number)
   end
 
-  def apply_event(%__MODULE__{} = book, %Event{:type => @created_event, :body => data}) do
+  defp apply_event_impl(%__MODULE__{} = book, %Event{:type => @created_event, :body => data}) do
     volume_info = VolumeInfo.new(
       data["title"],
       data["authors"],
@@ -177,6 +182,10 @@ defmodule MabelsBookshelf.Aggregates.Book do
     |> update_field(:id, data["id"])
     |> update_field(:owner_id, data["owner_id"])
     |> update_field(:volume_info, volume_info)
+  end
+
+  defp bump_version(book) do
+    Map.update(book, :version, -1, &(&1+1))
   end
 
   defp update_field(book, field, value) do
@@ -211,5 +220,10 @@ defmodule MabelsBookshelf.Aggregates.Book do
   def get_pending_events(book) do
     book.events
     |> Enum.reverse()
+  end
+
+  @impl EventSourced
+  def get_version(book) do
+    book.version
   end
 end

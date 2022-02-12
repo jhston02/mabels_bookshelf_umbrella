@@ -17,6 +17,7 @@ defmodule BookTests do
       assert book.volume_info.title == nil
       assert book.status == :want
       assert book.deleted == false
+      assert Book.get_version(book) == 0
     end
 
     test "Given no book, when book created, book has pending create event", context do
