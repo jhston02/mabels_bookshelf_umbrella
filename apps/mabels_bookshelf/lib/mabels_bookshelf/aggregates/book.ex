@@ -42,9 +42,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to reading
   """
-  def start_reading(%__MODULE__{:status => :reading}) do
-    {:error, "Already reading book"}
-  end
+  def start_reading(%__MODULE__{:status => :reading}), do: {:error, "Already reading book"}
 
   def start_reading(%__MODULE__{} = book) do
     event = Event.new(@started_event, populate_base_event_data(book, %{}))
@@ -54,13 +52,8 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to finished
   """
-  def finished_reading(%__MODULE__{:status => :finished}) do
-    {:error, "Already finished book"}
-  end
-
-  def finished_reading(%__MODULE__{:status => :dnf}) do
-    {:error, "Book not finished"}
-  end
+  def finished_reading(%__MODULE__{:status => :finished}), do: {:error, "Already finished book"}
+  def finished_reading(%__MODULE__{:status => :dnf}), do:   {:error, "Book not finished"}
 
   def finished_reading(%__MODULE__{} = book) do
     event = Event.new(@finished_event, populate_base_event_data(book, %{}))
@@ -70,9 +63,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to 'Did Not finish' (dnf)
   """
-  def quit(%__MODULE__{status: :dnf}) do
-    {:error, "Book already not finished"}
-  end
+  def quit(%__MODULE__{status: :dnf}), do: {:error, "Book already not finished"}
 
   def quit(%__MODULE__{} = book) do
     event = Event.new(@quit_event, populate_base_event_data(book, %{}))
@@ -82,9 +73,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets the status of a book to wanted.
   """
-  def wanted(%__MODULE__{status: :want}) do
-    {:error, "Book already wanted"}
-  end
+  def wanted(%__MODULE__{status: :want}), do: {:error, "Book already wanted"}
 
   def wanted(%__MODULE__{} = book) do
     event = Event.new(@wanted_event, populate_base_event_data(book, %{}))
@@ -118,9 +107,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Sets a book to be soft deleted
   """
-  def delete(%__MODULE__{deleted: true}) do
-    {:error, "Already deleted"}
-  end
+  def delete(%__MODULE__{deleted: true}), do: {:error, "Already deleted"}
 
   def delete(%__MODULE__{} = book) do
     event = Event.new(@deleted_event, populate_base_event_data(book, %{}))
@@ -132,9 +119,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
     book
   end
 
-  defp finish_if_read_to_end(book) do
-    book
-  end
+  defp finish_if_read_to_end(book), do: book
 
   @doc """
   The apply functions applies an event to a book.
