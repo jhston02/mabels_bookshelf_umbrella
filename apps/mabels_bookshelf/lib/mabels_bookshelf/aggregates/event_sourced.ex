@@ -1,7 +1,7 @@
 defmodule MabelsBookshelf.Aggregates.EventSourced do
   @moduledoc """
-  Default EventSourced module implementation. Note that in order to use this the Aggregate module must contain a struct with an event: atom. The user should also
-  override the private apply_event_impl/2 function
+  Default EventSourced module implementation. Note that in order to use this the Aggregate module must contain a struct.
+  The user should also override the private apply_event_impl/2 function
   """
 
   defmacro __using__(opts) do
@@ -25,18 +25,18 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
 
       @impl EventSourced
       def clear_pending_events(%unquote(module){} = aggregate) do
-        %{aggregate | events: []}
+        Map.replace(aggregate, :events, [])
       end
 
       @impl EventSourced
       def get_pending_events(%unquote(module){} = aggregate) do
-        aggregate.events
+        Map.get(aggregate, :events, [])
         |> Enum.reverse()
       end
 
       @impl EventSourced
       def get_version(%unquote(module){} = aggregate) do
-        aggregate.version
+        Map.get(aggregate, :version, -1)
       end
 
       defp apply_event_impl(%unquote(module){} = aggregate, %Event{} = _event) do
@@ -44,7 +44,7 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
       end
 
       defp bump_version(%unquote(module){} = aggregate) do
-        Map.update(aggregate, :version, -1, &(&1+1))
+        Map.update(aggregate, :version, 0, &(&1+1))
       end
 
       defp when_event(%unquote(module){} = aggregate, %Event{} = event) do
