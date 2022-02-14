@@ -2,6 +2,11 @@ defmodule MabelsBookshelf.Behaviors.EventSourced do
   alias MabelsBookshelf.Behaviors.Event
 
   @doc """
+  Apply event to aggregate
+  """
+  @callback apply_event(term, %Event{}) :: term
+
+  @doc """
   Add event to aggregate
   """
   @callback add_event(term, %Event{}) :: term

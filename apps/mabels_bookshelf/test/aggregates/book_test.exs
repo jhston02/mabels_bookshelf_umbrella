@@ -7,14 +7,13 @@ defmodule BookTests do
   describe "Book creation" do
     setup do
       [
-        book: Book.new("id", "owner_id", %VolumeInfo{})
+        book: Book.new("id", "owner_id", 10, "test")
       ]
     end
 
     test "Given no book, when book created, book has passed in information", context do
       book = context.book
       assert book.id == "id"
-      assert book.volume_info.title == nil
       assert book.status == :want
       assert book.deleted == false
       assert Book.get_version(book) == 0
@@ -28,7 +27,7 @@ defmodule BookTests do
 
   describe "Existing book" do
     setup do
-      book = Book.new("id", "owner_id", VolumeInfo.new("test", ["mabel"], "00000", "000000", 20, ["sci-fi"]))
+      book = Book.new("id", "owner_id",20, "test")
       book = Book.clear_pending_events(book)
       [
         book: book
