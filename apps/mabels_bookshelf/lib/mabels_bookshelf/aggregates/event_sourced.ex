@@ -4,7 +4,8 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
   override the private apply_event_impl/2 function
   """
 
-  defmacro __using__(_opts) do
+  defmacro __using__(opts) do
+    module = Keyword.get(opts, :module)
     quote do
       alias MabelsBookshelf.Behaviors.EventSourced
       alias MabelsBookshelf.Behaviors.Event
@@ -12,37 +13,37 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
       @behaviour EventSourced
 
       @impl EventSourced
-      def apply_event(%{} = aggregate, %Event{} = event) do
+      def apply_event(%unquote(module){} = aggregate, %Event{} = event) do
         apply_event_impl(aggregate, event)
         |> bump_version()
       end
 
       @impl EventSourced
-      def add_event(%{} = aggregate, %Event{} = event) do
+      def add_event(%unquote(module){} = aggregate, %Event{} = event) do
         Map.update(aggregate, :events, [], &([event | &1]))
       end
 
       @impl EventSourced
-      def clear_pending_events(%{} = aggregate) do
+      def clear_pending_events(%unquote(module){} = aggregate) do
         %{aggregate | events: []}
       end
 
       @impl EventSourced
-      def get_pending_events(%{} = aggregate) do
+      def get_pending_events(%unquote(module){} = aggregate) do
         aggregate.events
         |> Enum.reverse()
       end
 
       @impl EventSourced
-      def get_version(%{} = aggregate) do
+      def get_version(%unquote(module){} = aggregate) do
         aggregate.version
       end
 
-      defp apply_event_impl(%{} = aggregate, %Event{} = _event) do
+      defp apply_event_impl(%unquote(module){} = aggregate, %Event{} = _event) do
         aggregate
       end
 
-      defp bump_version(%{} = aggregate) do
+      defp bump_version(%unquote(module){} = aggregate) do
         Map.update(aggregate, :version, -1, &(&1+1))
       end
 

@@ -8,7 +8,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
 
   defstruct [id: nil, status: :want, isbn: nil, current_page: 0, total_pages: 0, owner_id: nil, events: [], deleted: false, version: -1]
 
-  use MabelsBookshelf.Aggregates.EventSourced
+  use MabelsBookshelf.Aggregates.EventSourced, module: Book
 
   @started_event "BookStarted"
   @finished_event "BookFinished"
