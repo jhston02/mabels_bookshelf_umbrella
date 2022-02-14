@@ -6,7 +6,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   """
   alias __MODULE__
 
-  defstruct [id: nil, status: :want, isbn: nil, current_page: 0, total_pages: 0, owner_id: nil, events: [], deleted: false, version: -1]
+  defstruct [id: nil, status: :want, isbn: nil, current_page: 0, total_pages: 0, owner_id: nil, deleted: false]
 
   use MabelsBookshelf.Aggregates.EventSourced, module: Book
 
