@@ -47,6 +47,12 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
         Map.update(aggregate, :version, -1, &(&1+1))
       end
 
+      defp when_event(%unquote(module){} = aggregate, %Event{} = event) do
+        aggregate
+        |> add_event(event)
+        |> apply_event(event)
+      end
+
       defoverridable [apply_event_impl: 2]
     end
   end

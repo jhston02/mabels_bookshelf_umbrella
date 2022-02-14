@@ -163,10 +163,4 @@ defmodule MabelsBookshelf.Aggregates.Book do
     |> Map.put("id", book.id)
     |> Map.put("owner_id", book.owner_id)
   end
-
-  defp when_event(book, event) do
-    book
-    |> add_event(event)
-    |> apply_event(event)
-  end
 end
