@@ -1,12 +1,17 @@
 defmodule MabelsBookshelf.Aggregates.Book do
-
   @moduledoc """
   The Book module is responsible for the domain logic around books. Note book in this context is an instance of a 'book'. Think more the actual book sitting on a shelf than
   the nebulous book from a publishers perspective
   """
   alias __MODULE__
 
-  defstruct [id: nil, status: :want, isbn: nil, current_page: 0, total_pages: 0, owner_id: nil, deleted: false]
+  defstruct id: nil,
+            status: :want,
+            isbn: nil,
+            current_page: 0,
+            total_pages: 0,
+            owner_id: nil,
+            deleted: false
 
   use MabelsBookshelf.Aggregates.EventSourced, module: Book
 
@@ -15,7 +20,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @quit_event "BookQuit"
   @wanted_event "BookWanted"
   @read_event "ReadToPage"
-  @deleted_event "Deleted"
+  @deleted_event "BookDeleted"
   @created_event "BookCreated"
 
   @doc """
@@ -28,6 +33,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
       "owner_id" => owner_id,
       "isbn" => isbn
     }
+
     event = Event.new(@created_event, data)
 
     %__MODULE__{}
@@ -48,7 +54,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
   Sets the status of a book to finished
   """
   def finish_reading(%Book{:status => :finished}), do: {:error, "Already finished book"}
-  def finish_reading(%Book{:status => :dnf}), do:   {:error, "Book not finished"}
+  def finish_reading(%Book{:status => :dnf}), do: {:error, "Book not finished"}
 
   def finish_reading(%Book{} = book) do
     event = Event.new(@finished_event, populate_base_event_data(book, %{}))
@@ -78,11 +84,13 @@ defmodule MabelsBookshelf.Aggregates.Book do
   @doc """
   Set currents to page to the page_number. If this is equal to total pages the book will be set to finished. If the status is not reading it will be set to reading if not finished
   """
-  def read_to_page(%Book{total_pages: total_pages}, page_number) when page_number < 0 or page_number > total_pages do
+  def read_to_page(%Book{total_pages: total_pages}, page_number)
+      when page_number < 0 or page_number > total_pages do
     {:error, "Please enter valid page number"}
   end
 
-  def read_to_page(%Book{current_page: current_page}, page_number) when current_page == page_number do
+  def read_to_page(%Book{current_page: current_page}, page_number)
+      when current_page == page_number do
     {:error, "Please enter a different page number than where you currently have read to"}
   end
 
@@ -91,9 +99,12 @@ defmodule MabelsBookshelf.Aggregates.Book do
   end
 
   def read_to_page(%Book{status: :reading} = book, page_number) do
-    event = Event.new(@read_event, populate_base_event_data(book, %{"page_number" => page_number}))
-    book = when_event(book, event)
-    |> finish_if_read_to_end
+    event =
+      Event.new(@read_event, populate_base_event_data(book, %{"page_number" => page_number}))
+
+    book =
+      when_event(book, event)
+      |> finish_if_read_to_end
 
     {:ok, book}
   end
@@ -113,8 +124,7 @@ defmodule MabelsBookshelf.Aggregates.Book do
     {:ok, when_event(book, event)}
   end
 
-
-  #Override the apply_event_function from the EventSource module
+  # Override the apply_event_function from the EventSource module
   defp apply_event_impl(book, %Event{:type => @started_event}) do
     update_field(book, :status, :reading)
   end
@@ -135,7 +145,10 @@ defmodule MabelsBookshelf.Aggregates.Book do
     update_field(book, :deleted, true)
   end
 
-  defp apply_event_impl(book, %Event{:type => @read_event, :body => %{"page_number" => page_number}}) do
+  defp apply_event_impl(book, %Event{
+         :type => @read_event,
+         :body => %{"page_number" => page_number}
+       }) do
     update_field(book, :current_page, page_number)
   end
 
@@ -147,7 +160,8 @@ defmodule MabelsBookshelf.Aggregates.Book do
     |> update_field(:total_pages, data["total_pages"])
   end
 
-  defp finish_if_read_to_end(%Book{current_page: current_page, total_pages: total_pages} = book) when current_page == total_pages do
+  defp finish_if_read_to_end(%Book{current_page: current_page, total_pages: total_pages} = book)
+       when current_page == total_pages do
     {:ok, book} = finish_reading(book)
     book
   end

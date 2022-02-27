@@ -1,5 +1,5 @@
 defmodule MabelsBookshelf.Behaviors.Event do
-  defstruct [type: nil, body: %{}, metadata: %{}]
+  defstruct type: nil, body: %{}, metadata: %{}
 
   @doc """
   Creates a new event

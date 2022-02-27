@@ -6,6 +6,7 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
 
   defmacro __using__(opts) do
     module = Keyword.get(opts, :module)
+
     quote do
       alias MabelsBookshelf.Behaviors.EventSourced
       alias MabelsBookshelf.Behaviors.Event
@@ -20,7 +21,7 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
 
       @impl EventSourced
       def add_event(%unquote(module){} = aggregate, %Event{} = event) do
-        Map.update(aggregate, :events, [], &([event | &1]))
+        Map.update(aggregate, :events, [], &[event | &1])
       end
 
       @impl EventSourced
@@ -44,7 +45,7 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
       end
 
       defp bump_version(%unquote(module){} = aggregate) do
-        Map.update(aggregate, :version, 0, &(&1+1))
+        Map.update(aggregate, :version, 0, &(&1 + 1))
       end
 
       defp when_event(%unquote(module){} = aggregate, %Event{} = event) do
@@ -53,7 +54,7 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
         |> apply_event(event)
       end
 
-      defoverridable [apply_event_impl: 2]
+      defoverridable apply_event_impl: 2
     end
   end
 end

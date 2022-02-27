@@ -27,8 +27,9 @@ defmodule BookTests do
 
   describe "Existing book" do
     setup do
-      book = Book.new("id", "owner_id",20, "test")
+      book = Book.new("id", "owner_id", 20, "test")
       book = Book.clear_pending_events(book)
+
       [
         book: book
       ]
@@ -41,7 +42,8 @@ defmodule BookTests do
       assert book.status == :reading
     end
 
-    test "Given existing book, when start reading book and already reading, return error", context do
+    test "Given existing book, when start reading book and already reading, return error",
+         context do
       book = context.book
       {:ok, book} = Book.start_reading(book)
 
@@ -62,7 +64,8 @@ defmodule BookTests do
       assert {:error, _message} = Book.finish_reading(book)
     end
 
-    test "Given existing book, when finished book and book in dnf status, returns error", context do
+    test "Given existing book, when finished book and book in dnf status, returns error",
+         context do
       book = context.book
       {:ok, book} = Book.quit_reading(book)
 
@@ -91,7 +94,8 @@ defmodule BookTests do
       assert book.deleted == true
     end
 
-    test "Given existing book, when read to page and not currently reading, book status is reading and current page is set to read to", context do
+    test "Given existing book, when read to page and not currently reading, book status is reading and current page is set to read to",
+         context do
       book = context.book
       {:ok, book} = Book.read_to_page(book, 10)
       assert book.status == :reading
@@ -103,19 +107,22 @@ defmodule BookTests do
       assert {:error, _message} = Book.read_to_page(book, -500)
     end
 
-    test "Given existing book, when read to page and page past of end of book, return error", context do
+    test "Given existing book, when read to page and page past of end of book, return error",
+         context do
       book = context.book
       assert {:error, _message} = Book.read_to_page(book, 500)
     end
 
-    test "Given existing book, when read to page and currently reading, current page is set to read to", context do
+    test "Given existing book, when read to page and currently reading, current page is set to read to",
+         context do
       book = context.book
       {:ok, book} = Book.start_reading(book)
       {:ok, book} = Book.read_to_page(book, 10)
       assert book.current_page == 10
     end
 
-    test "Given existing book, when read to page and page is end of book, book status is set to finished", context do
+    test "Given existing book, when read to page and page is end of book, book status is set to finished",
+         context do
       book = context.book
       {:ok, book} = Book.read_to_page(book, 20)
       assert book.status == :finished
