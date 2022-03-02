@@ -21,7 +21,7 @@ defmodule MabelsBookshelf.Aggregates.EventSourced do
 
       @impl EventSourced
       def add_event(%unquote(module){} = aggregate, %Event{} = event) do
-        Map.update(aggregate, :events, [], &[event | &1])
+        Map.update(aggregate, :events, [event], &[event | &1])
       end
 
       @impl EventSourced

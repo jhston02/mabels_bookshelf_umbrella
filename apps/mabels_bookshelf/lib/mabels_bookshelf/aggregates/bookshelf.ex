@@ -78,6 +78,8 @@ defmodule MabelsBookshelf.Aggregates.Bookshelf do
   @doc """
   Soft deletes bookshelf
   """
+  def delete(%Bookshelf{deleted: true}), do: {:error, "Already deleted"}
+
   def delete(%Bookshelf{} = bookshelf) do
     event = Event.new(@bookshelf_deleted, populate_base_event_data(bookshelf, %{}))
     {:ok, when_event(bookshelf, event)}
@@ -96,7 +98,7 @@ defmodule MabelsBookshelf.Aggregates.Bookshelf do
     update_field(bookshelf, :books, updated_books)
   end
 
-    # Override the apply_event_function from the EventSource module
+  # Override the apply_event_function from the EventSource module
   defp apply_event_impl(bookshelf, %Event{type: @book_removed_event, body: body}) do
     updated_books = List.delete(bookshelf.books, body["book_id"])
 
