@@ -1,4 +1,9 @@
 defmodule MabelsBookshelf.Aggregates.Bookshelf do
+
+  @moduledoc """
+  Conceptual grouping of books
+  """
+
   alias MabelsBookshelf.Aggregates.Bookshelf
 
   defstruct id: nil, name: nil, owner_id: nil, books: [], deleted: false
