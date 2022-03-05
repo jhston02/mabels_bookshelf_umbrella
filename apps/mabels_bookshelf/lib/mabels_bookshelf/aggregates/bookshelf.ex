@@ -1,5 +1,4 @@
 defmodule MabelsBookshelf.Aggregates.Bookshelf do
-
   @moduledoc """
   Conceptual grouping of books
   """
