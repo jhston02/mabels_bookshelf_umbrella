@@ -9,7 +9,8 @@ defmodule MabelsBookshelf.Application do
   def start(_type, _args) do
     children = [
       # Start the PubSub system
-      {Phoenix.PubSub, name: MabelsBookshelf.PubSub}
+      {Phoenix.PubSub, name: MabelsBookshelf.PubSub},
+      MabelsBookshelf.EventStoreDbClient
       # Start a worker by calling: MabelsBookshelf.Worker.start_link(arg)
       # {MabelsBookshelf.Worker, arg}
     ]

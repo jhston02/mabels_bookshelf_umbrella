@@ -1,10 +1,13 @@
-defmodule Mabelsbookshelf.EventStoreDbClient do
+defmodule MabelsBookshelf.EventStoreDbClient  do
   use Spear.Client, otp_app: :mabels_bookshelf
+  alias MabelsBookshelf.Behaviors.Event
 
   def insert(module, entity, stream_name) do
     get_events_from_aggregate(module, entity)
     |> events_to_spear_events()
     |> append(stream_name, expect: :empty)
+
+    clear_pending_events(module, entity)
   end
 
   def update(module, entity, stream_name) do
@@ -12,8 +15,10 @@ defmodule Mabelsbookshelf.EventStoreDbClient do
     revision = calculate_revision(module, events, entity)
 
     events
-    |> event_to_spear_event()
+    |> events_to_spear_events()
     |> append(stream_name, expect: revision)
+
+    clear_pending_events(module, entity)
   end
 
   def get(module, stream_name) do
@@ -22,7 +27,8 @@ defmodule Mabelsbookshelf.EventStoreDbClient do
   end
 
   defp apply_events(events, module) do
-    Enum.reduce(events, struct(module), fn event, entity ->
+    spear_events_to_events(events)
+    |> Enum.reduce(struct(module), fn event, entity ->
       apply(module, :apply_event, [entity, event])
     end)
   end
@@ -30,6 +36,10 @@ defmodule Mabelsbookshelf.EventStoreDbClient do
   defp calculate_revision(module, events, entity) do
     version = apply(module, :get_version, [entity])
     version - length(events)
+  end
+
+  defp clear_pending_events(module, entity) do
+    apply(module, :clear_pending_events, [entity])
   end
 
   defp get_events_from_aggregate(module, entity) do
@@ -41,7 +51,16 @@ defmodule Mabelsbookshelf.EventStoreDbClient do
     |> Enum.map(&event_to_spear_event/1)
   end
 
-  defp event_to_spear_event(events) do
-    Enum.map(events, fn event -> Spear.Event.new(event.type, Map.from_struct(event.body)) end)
+  defp event_to_spear_event(event) do
+    Spear.Event.new(event.type, event.body)
+  end
+
+  defp spear_events_to_events(events) do
+    events
+    |> Enum.map(&spear_event_to_event/1)
+  end
+
+  defp spear_event_to_event(event) do
+    Event.new(event.type, event.body)
   end
 end

@@ -40,7 +40,8 @@ defmodule MabelsBookshelf.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:swoosh, "~> 1.3"},
       {:ecto, "~> 3.7"},
-      {:jason, "~> 1.3"}
+      {:jason, "~> 1.3"},
+      {:poolboy, "~> 1.5"}
     ]
   end
 
