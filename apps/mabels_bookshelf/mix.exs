@@ -41,7 +41,8 @@ defmodule MabelsBookshelf.MixProject do
       {:swoosh, "~> 1.3"},
       {:ecto, "~> 3.7"},
       {:jason, "~> 1.3"},
-      {:poolboy, "~> 1.5"}
+      {:poolboy, "~> 1.5"},
+      {:norm, "~> 0.13.0"}
     ]
   end
 
