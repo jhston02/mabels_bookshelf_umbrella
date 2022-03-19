@@ -10,7 +10,6 @@ defmodule MabelsBookshelf.Connections.SpearSupervisor do
     ]
   end
 
-
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end

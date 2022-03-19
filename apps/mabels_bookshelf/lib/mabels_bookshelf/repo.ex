@@ -2,7 +2,7 @@ defmodule MabelsBookshelf.Repo do
   alias MabelsBookshelf.Behaviors.Event
 
   def insert(module, entity, stream_name) do
-    run_on_pool(&(insert(&1, module, entity, stream_name)))
+    run_on_pool(&insert(&1, module, entity, stream_name))
   end
 
   defp insert(connection, module, entity, stream_name) do
@@ -14,7 +14,7 @@ defmodule MabelsBookshelf.Repo do
   end
 
   def update(module, entity, stream_name) do
-    run_on_pool(&(update(&1, module, entity, stream_name)))
+    run_on_pool(&update(&1, module, entity, stream_name))
   end
 
   defp update(connection, module, entity, stream_name) do
@@ -29,7 +29,7 @@ defmodule MabelsBookshelf.Repo do
   end
 
   def get(module, stream_name) do
-    run_on_pool(&(get(&1, module, stream_name)))
+    run_on_pool(&get(&1, module, stream_name))
   end
 
   defp get(connection, module, stream_name) do

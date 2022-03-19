@@ -1,7 +1,6 @@
 defmodule BookTests do
   use ExUnit.Case
   alias MabelsBookshelf.Aggregates.Book
-  alias MabelsBookshelf.Aggregates.Book.VolumeInfo
   alias MabelsBookshelf.Behaviors.Event
 
   describe "Book creation" do
