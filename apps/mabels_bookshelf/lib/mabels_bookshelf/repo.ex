@@ -1,8 +1,9 @@
 defmodule MabelsBookshelf.Repo do
   alias MabelsBookshelf.Behaviors.Event
+  alias MabelsBookshelf.Repo.Pool
 
   def insert(module, entity, stream_name) do
-    run_on_pool(&insert(&1, module, entity, stream_name))
+    Pool.run(&insert(&1, module, entity, stream_name))
   end
 
   defp insert(connection, module, entity, stream_name) do
@@ -14,7 +15,7 @@ defmodule MabelsBookshelf.Repo do
   end
 
   def update(module, entity, stream_name) do
-    run_on_pool(&update(&1, module, entity, stream_name))
+    Pool.run(&update(&1, module, entity, stream_name))
   end
 
   defp update(connection, module, entity, stream_name) do
@@ -29,7 +30,7 @@ defmodule MabelsBookshelf.Repo do
   end
 
   def get(module, stream_name) do
-    run_on_pool(&get(&1, module, stream_name))
+    Pool.run(&get(&1, module, stream_name))
   end
 
   defp get(connection, module, stream_name) do
@@ -73,11 +74,5 @@ defmodule MabelsBookshelf.Repo do
 
   defp spear_event_to_event(event) do
     Event.new(event.type, event.body)
-  end
-
-  defp run_on_pool(action) do
-    :poolboy.transaction(:spear_supervisor, fn pid ->
-      action.(pid)
-    end)
   end
 end

@@ -1,9 +1,9 @@
-defmodule MabelsBookshelf.Connections.SpearSupervisor do
+defmodule MabelsBookshelf.Repo.PoolSupervisor do
   use Supervisor
 
   defp poolboy_config do
     [
-      name: {:local, :spear_supervisor},
+      name: {:local, :repo_pool_supervisor},
       worker_module: Spear.Connection,
       size: 10,
       max_overflow: 2
@@ -17,7 +17,7 @@ defmodule MabelsBookshelf.Connections.SpearSupervisor do
   @impl true
   def init(:ok) do
     children = [
-      :poolboy.child_spec(:spear_supervisor, poolboy_config())
+      :poolboy.child_spec(:repo_pool_supervisor, poolboy_config())
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
