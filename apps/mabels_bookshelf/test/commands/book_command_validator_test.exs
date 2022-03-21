@@ -25,7 +25,7 @@ defmodule BookCommandValidatorTest do
 
   describe "Finish book command" do
     test "Given valid finish_book_command, when validated, passes validation" do
-      cmd = %{"id" => "test"}
+      cmd = %{"id" => "test", "book_id" => "bookid"}
 
       assert cmd == CommandValidator.validate_finish_book_command(cmd)
     end
@@ -44,7 +44,7 @@ defmodule BookCommandValidatorTest do
 
   describe "Want book command" do
     test "Given valid want_book_command, when validated, passes validation" do
-      cmd = %{"id" => "test"}
+      cmd = %{"id" => "test", "book_id" => "bookid"}
 
       assert cmd == CommandValidator.validate_want_book_command(cmd)
     end
@@ -63,7 +63,7 @@ defmodule BookCommandValidatorTest do
 
   describe "Quit book command" do
     test "Given valid quit_book_command, when validated, passes validation" do
-      cmd = %{"id" => "test"}
+      cmd = %{"id" => "test", "book_id" => "bookid"}
 
       assert cmd == CommandValidator.validate_quit_book_command(cmd)
     end
@@ -82,7 +82,7 @@ defmodule BookCommandValidatorTest do
 
   describe "Start reading book command" do
     test "Given valid start_reading_command, when validated, passes validation" do
-      cmd = %{"id" => "test"}
+      cmd = %{"id" => "test", "book_id" => "bookid"}
 
       assert cmd == CommandValidator.validate_start_reading_command(cmd)
     end
@@ -101,7 +101,7 @@ defmodule BookCommandValidatorTest do
 
   describe "Delete book command" do
     test "Given valid delete_book_command, when validated, passes validation" do
-      cmd = %{"id" => "test"}
+      cmd = %{"id" => "test", "book_id" => "bookid"}
 
       assert cmd == CommandValidator.validate_delete_book_command(cmd)
     end
@@ -120,7 +120,7 @@ defmodule BookCommandValidatorTest do
 
   describe "Read to page command" do
     test "Given valid read_to_page_command, when validated, passes validation" do
-      cmd = %{"id" => "test"}
+      cmd = %{"id" => "test", "book_id" => "bookid", "page_number" => 4}
 
       assert cmd == CommandValidator.validate_read_to_page_command(cmd)
     end

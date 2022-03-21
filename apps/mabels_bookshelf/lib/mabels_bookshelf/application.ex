@@ -10,7 +10,7 @@ defmodule MabelsBookshelf.Application do
     children = [
       # Start the PubSub system
       {Phoenix.PubSub, name: MabelsBookshelf.PubSub},
-      MabelsBookshelf.Connections.SpearSupervisor
+      MabelsBookshelf.Repo.PoolSupervisor
       # Start a worker by calling: MabelsBookshelf.Worker.start_link(arg)
       # {MabelsBookshelf.Worker, arg}
     ]
