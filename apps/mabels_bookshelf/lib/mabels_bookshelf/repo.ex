@@ -2,7 +2,7 @@ defmodule MabelsBookshelf.Repo do
   alias MabelsBookshelf.Behaviors.Event
   alias MabelsBookshelf.Repo.Pool
 
-  def insert(module, entity, stream_name) do
+  def insert(entity, module, stream_name) do
     Pool.run(&insert(&1, module, entity, stream_name))
   end
 
@@ -14,7 +14,7 @@ defmodule MabelsBookshelf.Repo do
     clear_pending_events(module, entity)
   end
 
-  def update(module, entity, stream_name) do
+  def update(entity, module, stream_name) do
     Pool.run(&update(&1, module, entity, stream_name))
   end
 
